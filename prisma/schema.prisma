@@ -6,45 +6,66 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id              String           @id @default(uuid())
-  email           String           @unique
-  name            String?
-  isAdmin         Boolean
-  Post            Post[]
-  UserPreferences UserPreferences?
+model Products {
+  id              Int           @id @default(autoincrement())
+  name            String
+  category Category
+  amount Int
+  price Int
+  orders orderProduct[]
 }
 
-model UserPreferences {
-  id           String  @id @default(uuid())
-  emailUpdates Boolean
-  userID       String  @unique
-  user         User    @relation(fields: [userID], references: [id])
+model customers {
+  id           Int           @id @default(autoincrement())
+  firstName String
+  middleName String?
+  lastName String
+  email       String  @unique
+  birthday DateTime @default(now())
+  orders orders[]
 }
 
-model Post {
-  id         String     @id @default(uuid())
-  title      String
-  rating     Float
-  createdAt  DateTime   @default(now())
-  authorID   String
-  author     User       @relation(fields: [authorID], references: [id])
-  categories Category[]
-  licenses License[]
+model employees {
+  id           Int           @id @default(autoincrement())
+  firstName String
+  middleName String?
+  lastName String
+  position String
+  orders orders[]
 }
 
-model Category {
-  id    String @id @default(uuid())
-  name  String @unique
-  posts Post[]
+model orders {
+  id           Int           @id @default(autoincrement())
+  employee employees @relation(fields: [employeeId], references: [id])
+  employeeId Int
+  customer customers @relation(fields: [customerId], references: [id])
+  customerId Int
+  orderAddress String
+  deliveryCost Int
+  orderDate DateTime @default(now())
+  products orderProduct[]
 }
 
-model License {
-  id    String @id @default(uuid())
-  name  String @unique
-  posts Post[]
+model orderProduct {
+  orderId Int
+  order orders @relation(fields: [orderId], references: [id])
+
+  productId Int
+  product Products @relation(fields: [productId], references: [id])
+
+  @@id([orderId,productId])
 }
+
+enum Category {
+  FOOD
+  HOUSEHOLD
+  DAIRY
+  BREAD
+}
+
+
+
