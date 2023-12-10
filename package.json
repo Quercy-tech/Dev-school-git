@@ -17,6 +17,7 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
+    "@nestjs/mapped-types": "*",
     "@prisma/client": "^5.5.2",
     "body-parser": "^1.20.2",
     "express": "^4.18.2"
